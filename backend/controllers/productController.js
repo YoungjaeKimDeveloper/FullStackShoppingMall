@@ -52,3 +52,25 @@ export const deleteItem = async (req, res) => {
     res.status(404).send({ success: false, message: error.message });
   }
 };
+
+export const updateItem = async (req, res) => {
+  const { id } = req.params;
+  const newProduct = req.body;
+  const { name, price, image } = newProduct;
+  if (!name || !price || !image) {
+    return res
+      .status(404)
+      .send({ success: false, message: "PLEASE FILL UP THE ALL FORMS" });
+  }
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res
+      .status(404)
+      .send({ success: false, message: "Can't find the DATA" });
+  }
+  try {
+    await Product.findByIdAndUpdate({ _id: id }, newProduct, { new: true });
+    res.status(201).send({ success: true, data: newProduct });
+  } catch (error) {
+    res.status(500).send({ success: false, message: error.message });
+  }
+};
